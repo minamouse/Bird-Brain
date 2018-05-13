@@ -44,7 +44,7 @@ public class Birb : MonoBehaviour {
         currentWaitTime += 1;
         if (currentWaitTime == waitTime)
         {
-            waitTime = Random.Range(1, 4) * 30;
+            waitTime = Random.Range(3, 8) * 30;
             myAudio.PlayOneShot(song);
             currentWaitTime = 0;
         }
