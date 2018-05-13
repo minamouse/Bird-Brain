@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Birb : MonoBehaviour {
 
@@ -11,18 +12,28 @@ public class Birb : MonoBehaviour {
     bool isMoving;
     Animator animations;
     public BirbControl birbControl;
+    public Camera cam;
+    AudioSource song;
 
 	// Use this for initialization
 	void Start () {
        // birbControl = GetComponent<BirbControl>();
         animations = GetComponent<Animator>();
-        Debug.Log(birbControl);
         startPos = birbControl.GetPosition();
         transform.position = startPos;
         time = 210;
         currentTime = 0;
         isMoving = false;
-	}
+        song = GetComponent<AudioSource>();
+        if (name == GameStats.NextBird())
+        {
+            song.volume = 1;
+        } else
+        {
+            song.volume = 0.5f;
+        }
+
+    }
 
     // Update is called once per frame
     void Update() {
@@ -51,7 +62,22 @@ public class Birb : MonoBehaviour {
             }
 
         }
-        
-		
-	}
+
+        if (Input.GetKeyDown("space"))
+        {
+            //calculate if the correct bird was in the frame
+            if (name == GameStats.NextBird())
+            {
+                Vector3 relativePos = cam.WorldToViewportPoint(transform.position);
+                if (relativePos.x >= 0 && relativePos.x <= 1 && relativePos.y >= 0 && relativePos.y <= 1 && relativePos.z >= 0)
+                {
+                    GameStats.SetFound(name);
+                }
+            }
+            SceneManager.LoadScene("FoundBird");
+
+        }
+
+
+    }
 }
