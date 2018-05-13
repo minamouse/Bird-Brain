@@ -13,10 +13,14 @@ public class Birb : MonoBehaviour {
     Animator animations;
     public BirbControl birbControl;
     public Camera cam;
-    AudioSource song;
+    public AudioClip song;
+    public AudioSource myAudio;
+    public int waitTime;
+    public int currentWaitTime;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
+        waitTime = Random.Range(1, 4) * 30;
        // birbControl = GetComponent<BirbControl>();
         animations = GetComponent<Animator>();
         startPos = birbControl.GetPosition();
@@ -24,20 +28,26 @@ public class Birb : MonoBehaviour {
         time = 210;
         currentTime = 0;
         isMoving = false;
-        song = GetComponent<AudioSource>();
+        myAudio = GetComponent<AudioSource>();
         if (name == GameStats.NextBird())
         {
-            song.volume = 1;
+            myAudio.volume = 1;
         } else
         {
-            song.volume = 0.5f;
+            myAudio.volume = 0.3f;
         }
-
     }
 
     // Update is called once per frame
     void Update() {
 
+        currentWaitTime += 1;
+        if (currentWaitTime == waitTime)
+        {
+            waitTime = Random.Range(1, 4) * 30;
+            myAudio.PlayOneShot(song);
+            currentWaitTime = 0;
+        }
         if (isMoving)
         {
             if (transform.position == goalPos) {
@@ -55,6 +65,7 @@ public class Birb : MonoBehaviour {
             currentTime += 1;
             if (currentTime == time)
             {
+                time = Random.Range(3, 10) * 30;
                 isMoving = true;
                 goalPos = birbControl.GetPosition();
                 transform.LookAt(goalPos);
